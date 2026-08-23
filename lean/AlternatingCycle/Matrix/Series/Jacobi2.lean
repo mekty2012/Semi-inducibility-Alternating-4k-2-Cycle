@@ -4,16 +4,15 @@ import AlternatingCycle.Matrix.Scalar.LogDeriv
 /-!
 # Jacobi's formula in size two, and the resulting `Λ` identity
 
-`eq:logdet-trace` of `alternating_cycles_schur_proof.tex` is Jacobi's formula for an `n × n`
-matrix.  After the Schur reduction of `Series/Schur.lean` the only determinant left is the `2 × 2`
-determinant of `M₂`, and there Jacobi's formula is a two-line computation closed by `ring`:
+After the Schur-complement reduction of `Series/Schur.lean`, the only determinant left is the `2 × 2`
+determinant of `M₂`.  In that dimension Jacobi's formula is a direct computation closed by `ring`:
 
 ```
   Tr(adj M · M') = M₁₁ M₀₀' − M₀₁ M₁₀' − M₁₀ M₀₁' + M₀₀ M₁₁' = (M₀₀M₁₁ − M₀₁M₁₀)' = (det M)'.
 ```
 
 Combining with `det_mul_trace_sub` and the observation `V·N²·U = z · (d⁄dX M₂)` (supplied by the
-caller) gives the identity that replaces `eq:logdet-factor` entirely:
+caller) gives the trace identity directly:
 
 ```
   Tr Rm − Tr Nm = Λ (det M₂).
@@ -42,7 +41,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {Dm Nm Rinv Rm : Matrix ι ι ℝ⟦X⟧}
 variable {U : Matrix ι (Fin 2) ℝ⟦X⟧} {V : Matrix (Fin 2) ι ℝ⟦X⟧}
 
-/-- **The replacement for `eq:logdet-factor`.**  Under the Schur decomposition
+/-- Under the low-rank decomposition
 `Rinv = Dm + U·V`, the derivative hypothesis `V·Nm²·U = z · (d⁄dX M₂)`, and `det M₂` a unit,
 the difference of trace generating functions is exactly `Λ (det M₂)`. -/
 theorem trace_sub_eq_logDeriv (hND : Nm * Dm = 1) (hRR : Rinv * Rm = 1)

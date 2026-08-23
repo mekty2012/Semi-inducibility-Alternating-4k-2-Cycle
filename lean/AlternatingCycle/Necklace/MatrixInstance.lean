@@ -2,7 +2,7 @@ import AlternatingCycle.Necklace.Trace
 import AlternatingCycle.Matrix.Conjugation
 
 /-!
-# Fact A for matrices
+# Universal moment expansion for matrices
 
 With `𝒜 = Matrix (Fin n) (Fin n) ℝ`, `τ = trace`,
 `j = P = e ⊗ e` and `k = A`, the three hypotheses of `Necklace/Trace.lean` are
@@ -20,7 +20,7 @@ none of which needs `A` symmetric, `e` a unit vector, or any bound on the trace.
 ```
 
 holds unconditionally, and `matrix_main_general` bounds the right-hand side by `1` under the
-hypotheses of `thm:matrix`.  The right-hand side is the same expression the kernel instantiation
+hypotheses of the matrix trace inequality.  The right-hand side is the same expression the kernel instantiation
 produces, which is what lets the two be compared.
 
 The `m = 1` coefficients are computed at the end of the file.
@@ -59,6 +59,19 @@ lemma trace_vecMulVec_mul_pow (A : Matrix (Fin n) (Fin n) ℝ) (e : Fin n → �
   rw [Matrix.vecMulVec_mul, Matrix.trace_vecMulVec, matMoment, Matrix.dotProduct_mulVec,
     dotProduct_comm]
 
+/-- The period-two matrix word has the universal moment expansion at odd powers. -/
+theorem trace_colorPattern_matrix_add (a b : ℝ) (hab : a * b = 1)
+    (A : Matrix (Fin n) (Fin n) ℝ) (e : Fin n → ℝ) {m : ℕ} (hm : Odd m) :
+    Matrix.trace
+          (((Matrix.vecMulVec e e + a • A) * (Matrix.vecMulVec e e - b • A)) ^ m)
+        + Matrix.trace (A ^ (2 * m))
+      = ∑ x ∈ range (2 * m + 1), ∑ y ∈ range (2 * m + 1),
+          coeff (colorPattern a b) (matMoment A e) (2 * m) x y *
+            matMoment A e (x + y) :=
+  tau_colorPattern_add a b (matMoment A e) (Matrix.vecMulVec e e) A
+    (Matrix.traceLinearMap (Fin n) ℝ ℝ) (vecMulVec_pow_vecMulVec A e)
+    (fun M N => Matrix.trace_mul_comm M N) (trace_vecMulVec_mul_pow A e) hab hm
+
 /-- **Fact A for matrices.**  Unconditional: no symmetry, no normalisation, no trace bound. -/
 theorem trace_alt_matrix (A : Matrix (Fin n) (Fin n) ℝ) (e : Fin n → ℝ) (m : ℕ) :
     Matrix.trace (((Matrix.vecMulVec e e + A) * (Matrix.vecMulVec e e - A)) ^ m)
@@ -79,7 +92,7 @@ theorem trace_alt_matrix_add (A : Matrix (Fin n) (Fin n) ℝ) (e : Fin n → ℝ
     (vecMulVec_pow_vecMulVec A e) (fun M N => Matrix.trace_mul_comm M N)
     (trace_vecMulVec_mul_pow A e) hm
 
-/-- **`thm:matrix`, in moment form.**  Under the hypotheses of `matrix_main_general` the universal
+/-- Under the hypotheses of `matrix_main_general`, the universal
 expression `N_m` is at most `1`.  Since `N_m` depends on `(A, e)` only through the moments, this is
 the inequality the graphon layer will transport. -/
 theorem necklace_le_one {A : Matrix (Fin n) (Fin n) ℝ} (hsymm : Aᵀ = A) {e : Fin n → ℝ}

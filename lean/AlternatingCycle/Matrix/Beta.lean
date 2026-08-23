@@ -4,8 +4,9 @@ import AlternatingCycle.Matrix.Spectral
 /-!
 # `det M₂ = 1 − z F(z)`
 
-This is `lem:det-factor` finished: the `2 × 2` Schur determinant of `Model.lean` is identified with
-the series `F` of `Spectral.lean`.
+The determinant of the `2 × 2` Schur-complement matrix in `Model.lean` is identified with the
+series `F` of
+`Spectral.lean`.
 
 We work in the **diagonal** model `A = diagonal λ`, where `N(z)` is diagonal and every bilinear form
 `⟨a, N(z) b⟩` collapses to a single sum.  Then
@@ -15,8 +16,8 @@ We work in the **diagonal** model `A = diagonal λ`, where `N(z)` is diagonal an
        ⎣    z h          1 − z k ⎦
 ```
 
-the last step by `eq:h-ell` (`h + zℓ = 1`), exactly as in the note.  Working in a diagonalizing
-basis costs nothing: `thm:matrix` only involves traces and a unit vector, both invariant under
+the last step using `h + zℓ = 1`.  Working in a diagonalizing basis costs nothing: the matrix
+inequality only involves traces and a unit vector, both invariant under
 orthogonal conjugation, so the spectral theorem is needed once at the interface and never inside
 the argument.
 -/
@@ -167,7 +168,7 @@ lemma M2_11 : T.model.M2 1 1 = 1 - X * T.kSer := by
 
 /-! ### The determinant -/
 
-/-- **`eq:det-factor`.**  `det M₂ = 1 − z F(z)` with `F = ∑ (-1)^n β_n z^n`. -/
+/-- The factorization `det M₂ = 1 − z F(z)` with `F = ∑ (-1)^n β_n z^n`. -/
 theorem det_M2 : Matrix.det T.model.M2 = 1 - X * betaSeries T.beta := by
   rw [Matrix.det_fin_two, M2_00, M2_01, M2_10, M2_11, ← T.hSer_sq_add]
   linear_combination (X * T.hSer) * T.hSer_add_X_mul_lSer

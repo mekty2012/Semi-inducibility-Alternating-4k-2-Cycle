@@ -1,97 +1,122 @@
-# Semi-inducibility of alternating (4k+2)-cycles
+# Semi-inducibility of alternating cycles
 
-For every graphon `W` on every probability space `(Ω, μ)` and every odd `m` — equivalently, for
-every cycle of length `2m = 4k+2` —
+This Lean 4 development verifies a universal alternating-cycle inequality and its fixed-density
+refinement. For every graphon `W` and every odd `m`,
 
-```
-  4^m · Alt_{2m}(W) + t(C_{2m}, 2W − 1)  ≤  1,
-```
-
-and since the cycle density of a symmetric kernel at even length is nonnegative,
-
-```
-  Alt_{2m}(W)  ≤  4^{-m},
+```text
+4^m Alt_{2m}(W) + t(C_{2m}, 2W - 1) <= 1,
 ```
 
-both attained at the constant graphon `W ≡ 1/2`, where `t(C_{2m}, 2W − 1) = 0` and
-`Alt_{2m}(W) = 4^{-m}`.  So the alternating `(4k+2)`-cycle is semi-inducible with density `4^{-m}`,
-and the random-like graphon is extremal.  The note is `alternating_cycles_schur_proof.pdf`; the
-Lean development is in `lean/`.
+and consequently `Alt_{2m}(W) <= 4^{-m}`. The constant graphon `W = 1/2` attains equality.
 
-The results, all in `AlternatingCycle`:
+Now let `p` be the edge density of `W`, let `m >= 3`, and assume
 
-| | |
+```text
+(5 - sqrt 5) / 10 <= p <= (5 + sqrt 5) / 10.
+```
+
+Then
+
+```text
+Alt_{2m}(W) + t(C_{2m}, W - p) <= (p(1-p))^m,
+```
+
+and hence, by nonnegativity of the centered even-cycle density,
+
+```text
+Alt_{2m}(W) <= (p(1-p))^m.
+```
+
+This fixed-density inequality is stronger than the universal profile bound except at `p = 1/2`.
+The development proves the universal and fixed-density statements in cyclic-integral form and
+verifies equality at the corresponding constant graphons. It does not formalize uniqueness of
+either equality case.
+
+The corresponding mathematical proof is
+[`alternating_cycles_density_semi_inducibility.pdf`](alternating_cycles_density_semi_inducibility.pdf).
+
+## Main declarations
+
+All declarations below are in the `AlternatingCycle` namespace.
+
+| Declaration | Content |
 |---|---|
-| `alt_add_cycle_le_one` | the strengthened inequality, in the trace convention the proof runs in |
-| `altDensity_le` | `Alt_{2m}(W) ≤ 4^{-m}` |
-| `alt_add_cycle_le_one_integral` | the strengthened inequality with both densities as integrals over `Ω^{2m}` against the product measure, the form the note uses |
-| `half_alt`, `half_sharp` | `Alt_{2m}(1/2) = 4^{-m}`, and equality in the strengthened inequality |
+| `alt_add_cycle_le_one` | The universal inequality including the signed even-cycle term |
+| `altDensity_le` | The universal bound `Alt_{2m}(W) <= 4^{-m}` |
+| `alt_add_cycle_le_one_integral` | The same universal inequality as cyclic integrals |
+| `half_sharp`, `half_alt` | Equality at the constant graphon `W = 1/2` |
+| `fixedDensity_alt_add_centeredCycle_le` | The fixed-density inequality including the centered even-cycle term |
+| `fixedDensity_alt_le` | The fixed-density profile upper bound |
+| `fixedDensity_alt_add_centeredCycle_le_integral` | The same fixed-density inequality written as cyclic integrals |
+| `fixedDensity_alt_le_integral` | The profile bound written as a cyclic integral |
+| `constant_fixedDensity_sharp` | Equality in the fixed-density inequality for `W = p` |
+| `density_cubic_head_le_one` | The cubic constraint from nonnegative red/blue triple products |
+| `exists_fixedDensity_spectrum_cubic` | Finite spectral compression with the required moments and cubic constraint |
 
-## Building
+The theorems are stated for an arbitrary probability space. `Main.lean` is the entry point for the
+universal result and `DensityMain.lean` for the fixed-density refinement. `Defs.lean` contains the
+density definitions, and `Parameters.lean` proves the equivalence between the displayed interval
+and the scalar condition used by the fixed-density matrix argument.
 
-Requires Lean `v4.31.0` (via `elan`); the pinned mathlib `v4.31.0` is fetched automatically.  In
-`lean/`:
+## Build
 
-```
-lake exe cache get                # download the prebuilt mathlib cache
-lake build                        # builds everything; must end "Build completed successfully"
-lake env lean CheckAxioms.lean    # axiom audit; see below
-```
+The project uses Lean `v4.31.0` and the corresponding pinned mathlib release. From `lean/` run:
 
-A clean build produces no warnings.
-
-## Auditing the statement
-
-The claim to check is that the Lean theorem says what the note says.  Four files, in this order —
-nothing else needs to be read to establish it.
-
-| Read | For |
-|---|---|
-| `lean/AlternatingCycle/Main.lean` | the statements: lines 43, 76 and 98 |
-| `lean/AlternatingCycle/Defs.lean` | `sgn`, `cmpl`, `altDensity`, `signedCycleDensity` (lines 32–44) |
-| `lean/AlternatingCycle/Foundation/Graphon.lean` | `IsGraphon`, line 35 — the hypothesis on `W` |
-| `lean/AlternatingCycle/Foundation/Kernel.lean` | `comp` (40), `compPow` (1432), `trace` (1445) |
-
-These are the definitions the theorem is actually stated in; there is no separate summary to trust.
-Points worth checking explicitly:
-
-* `IsGraphon W μ` asks only for joint measurability, symmetry and `0 ≤ W ≤ 1`.  `Ω` is an arbitrary
-  `MeasurableSpace` with an `IsProbabilityMeasure`; it is never assumed to be `[0,1]`, finite, or
-  standard Borel, and `W` is never assumed to be a step function.
-* `altDensity W μ m` is `trace (compPow (comp W (cmpl W)) (m−1))` — the `m`-fold composite of
-  `W ∘ (1−W)`, traced.  `signedCycleDensity K μ r` is `trace (compPow K (r−1))`.
-* For the integral form, the two integrands are `altKernels` (`Fubini.lean`, line 281: `W` at even
-  positions, `1 − W` at odd ones) and `sgn W`, both under `cycleProd` (line 166), the product
-  `∏ᵢ Mᵢ (vᵢ, v_{i+1})` with indices cyclic in `Fin (2m)`.  The two forms are connected by
-  `altDensity_eq_integral` and `signedCycleDensity_eq_integral`.
-* `Sharp.lean`, lines 73 and 84: `half_alt` and `half_sharp` give `Alt_{2m}(1/2) = 4^{-m}` and
-  equality in the strengthened inequality, so neither bound can be improved.
-
-## Auditing the proof
-
-`lake env lean CheckAxioms.lean` prints, for each named result, the axioms it depends on.  Every
-line must read
-
-```
-depends on axioms: [propext, Classical.choice, Quot.sound]
+```console
+lake exe cache get
+lake build
+lake env lean CheckAxioms.lean
 ```
 
-These three are the standard classical axioms of mathlib.  Anything else — in particular
-`sorryAx` — means something is unproved.  Equivalently: `grep -rn "sorry\|native_decide" lean/`
-returns nothing, and `grep -rn "^axiom" lean/` returns nothing.
+A successful axiom audit reports only
 
-The development is laid out as follows.
-
+```text
+[propext, Classical.choice, Quot.sound]
 ```
-lean/AlternatingCycle.lean         index and architecture
+
+for each audited theorem. The source contains no `sorry`, `admit`, `native_decide`, or custom
+`axiom` declarations.
+
+## Proof organization
+
+```text
+lean/AlternatingCycle.lean
 lean/AlternatingCycle/
-  Defs.lean        the definitions the statement uses
-  Main.lean        the theorem, in both forms
-  Sharp.lean       equality at the constant graphon
-  Fubini.lean      traces = integrals over Ω^r
-  Positivity.lean  t(C_{2m}, K) = ∫∫ (K^{∘m})² ≥ 0 for symmetric K
-  Necklace/        both densities as one universal expression in the moments ⟨1, X^j 1⟩
-  Compression/     a finite symmetric matrix carrying those moments, with Tr(A²) ≤ 1
-  Matrix/          the finite-dimensional theorem the compression is fed into
-  Foundation/      kernel algebra and the L² operator of a kernel
+  DensityMain.lean                 public fixed-density theorems
+  Defs.lean                        graphon and density definitions
+  Parameters.lean                  density-interval parameter identities
+  Fubini.lean                      trace densities as cyclic integrals
+  Positivity.lean                  nonnegativity of signed even-cycle densities
+  Compression/
+    DensityL2.lean                 normalized centered operator
+    DensityHSBound.lean            Hilbert--Schmidt bound
+    DensityKrylov.lean             finite moment-preserving compression
+    DensityCubic.lean              cubic head constraint
+  Necklace/                        universal moment expansion
+  Matrix/
+    DensityModel.lean              density-parameterized rank-two model
+    DensityBeta.lean               determinant-series coefficients
+    DensityCoefficients.lean       monotonicity and diagonal matrix inequality
+    Scalar/                        polynomial and odd-coefficient lemmas
+    Series/                        resolvent and two-dimensional Schur-complement identities
+  Foundation/                      measurable kernel algebra and L2 operators
 ```
+
+The proof compresses the normalized centered kernel to a finite spectrum while preserving the
+moments needed by the period-two word. Pointwise nonnegativity of the normalized red and blue
+kernels supplies the cubic initial constraint. The finite-dimensional Schur-complement calculation produces
+a nonincreasing coefficient sequence, and the odd-coefficient lemma yields the final bound.
+
+## Audit reading order
+
+For the public statement and its translation to integrals, read:
+
+1. `AlternatingCycle/DensityMain.lean`
+2. `AlternatingCycle/Defs.lean`
+3. `AlternatingCycle/Parameters.lean`
+4. `AlternatingCycle/Fubini.lean`
+5. `AlternatingCycle/Foundation/Graphon.lean`
+6. `AlternatingCycle/Foundation/Kernel.lean`
+
+For the proof, continue with `Compression/DensityCubic.lean`,
+`Compression/DensityKrylov.lean`, `Necklace/`, and `Matrix/DensityCoefficients.lean`.

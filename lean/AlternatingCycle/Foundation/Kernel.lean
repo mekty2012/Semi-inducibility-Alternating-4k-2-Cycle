@@ -207,7 +207,7 @@ lemma sq_finset_weighted_indicator_sum_sub_le_badSet
 /-- Integral form of `sq_finset_weighted_indicator_sum_sub_le_badSet`.
 
 This turns finite atomwise symmetric-difference control into an `L²` error
-bound.  It is the quantitative bridge needed when replacing simple-function
+bound.  This quantitative control is used when replacing simple-function
 level sets by finite rectangle unions. -/
 lemma integral_sq_finset_weighted_indicator_sum_sub_le_badSet
     {α ι : Type*} [MeasurableSpace α] {ν : Measure α} [IsFiniteMeasure ν]
@@ -308,7 +308,7 @@ lemma integral_sq_finset_weighted_indicator_sum_sub_le_sum_symmDiff
 /-- A simple function is close in `L²` to any replacement of its level sets,
 with error controlled by the symmetric differences of the level sets.
 
-This is the simple-function version of the finite indicator estimate.  In the
+This is the simple-function version of the finite indicator bound.  In the
 graphon compactness proof, the replacement sets will be finite unions of
 measurable rectangles. -/
 lemma integral_sq_simpleFunc_sub_levelSet_replacements_le_sum_symmDiff
@@ -969,7 +969,7 @@ finite separable kernels.
 The finite index type is the dependent sum of a level value and one rectangle
 piece in that level's finite partition.  This is the bookkeeping lemma needed
 to turn the measure-theoretic rectangle approximation into the finite-rank
-data consumed by the Hilbert-Schmidt compactness bridge. -/
+data used in the Hilbert--Schmidt compactness argument. -/
 lemma exists_simpleFunc_rectangular_replacement_finiteRank_data
     (S : SimpleFunc (Ω × Ω) ℝ)
     (T : ℝ → Set (Ω × Ω))
@@ -1107,7 +1107,7 @@ lemma exists_simpleFunc_rectangular_replacement_finiteRank_data
 /-- Uniform square-error control for replacing the level sets of a simple
 function on `Ω × Ω` by finite unions of measurable rectangles.
 
-This is the deterministic estimate behind the finite-rank approximation
+This is the deterministic inequality behind the finite-rank approximation
 argument: once each atom of a simple function is approximated by a finite
 rectangle union with real symmetric-difference mass at most `η`, the whole
 simple-function error is bounded uniformly. -/
@@ -1182,7 +1182,7 @@ lemma exists_rectangular_levelSet_replacements_uniform_symmDiff
 /-- Combined rectangle-replacement theorem for simple functions: for any
 positive uniform atom error `η`, there are finite-rectangle replacements of
 all level sets, and the resulting rectangle-step function satisfies the
-global square-integral estimate. -/
+global square-integral bound. -/
 lemma exists_rectangular_levelSet_replacements_integral_sq_bound
     (μ : Measure Ω) [IsFiniteMeasure μ]
     (S : SimpleFunc (Ω × Ω) ℝ)

@@ -3,16 +3,13 @@ import AlternatingCycle.Matrix.Series.Jacobi2
 /-!
 # The rank-one model and the trace identity
 
-This is `eq:def-L`–`eq:logdet-factor` of `alternating_cycles_schur_proof.tex` in the finite
-model.  The data is a symmetric
-matrix `A` (the note's `X`) together with a unit vector `e`; we write
+The data are a symmetric matrix `A` and a unit vector `e`; we write
 
 ```
   P = e ⊗ e,   u = A e,   Y = A²,   L = (P + A)(P − A).
 ```
 
-The computation of `lem:det-factor` is reproduced verbatim at the matrix level: expanding `L` and
-using `P² = P`, `PA = e ⊗ u`, `AP = u ⊗ e` gives
+Expanding `L` and using `P² = P`, `PA = e ⊗ u`, and `AP = u ⊗ e` gives
 
 ```
   I − zL = (I + zY) + 𝒰 𝒱,        𝒰 = z·[e, −u],   𝒱 = [u − e; e],
@@ -26,8 +23,8 @@ loop, giving the main result of this file:
   traceSeries L − traceSeries (−Y) = Λ (det M₂),        M₂ = I₂ + 𝒱 N 𝒰.
 ```
 
-Reading off the coefficient of `z^m` for odd `m` is `eq:trace-coefficient`; the identification of
-`det M₂` with `1 − zF(z)` is the subject of `Beta.lean`.
+For odd `m`, coefficient extraction yields the required trace expression.  `Beta.lean` identifies
+`det M₂` with `1 − zF(z)`.
 -/
 
 namespace AlternatingCycle
@@ -36,9 +33,9 @@ open PowerSeries Matrix Finset
 
 noncomputable section
 
-/-- The data of `thm:matrix`: a symmetric matrix and a unit vector. -/
+/-- A symmetric matrix together with a distinguished unit vector. -/
 structure Model (n : ℕ) where
-  /-- The self-adjoint operator `X` of the note. -/
+  /-- The self-adjoint matrix. -/
   A : Matrix (Fin n) (Fin n) ℝ
   /-- The distinguished unit vector. -/
   e : Fin n → ℝ
@@ -58,7 +55,7 @@ def P : Matrix (Fin n) (Fin n) ℝ := Matrix.vecMulVec S.e S.e
 /-- `Y = A²`. -/
 def Y : Matrix (Fin n) (Fin n) ℝ := S.A * S.A
 
-/-- `L = (P + A)(P − A)`, the operator of `eq:def-L`. -/
+/-- The alternating product `L = (P + A)(P − A)`. -/
 def L : Matrix (Fin n) (Fin n) ℝ := (S.P + S.A) * (S.P - S.A)
 
 @[simp] lemma P_apply (i j : Fin n) : S.P i j = S.e i * S.e j := rfl
@@ -95,8 +92,7 @@ lemma A_mul_P : S.A * S.P = Matrix.of fun i j => S.u i * S.e j := by
   rw [Finset.sum_mul]
   exact Finset.sum_congr rfl fun k _ => by ring
 
-/-- Expanding `L` and cancelling `A²`: this is the first display of the proof of
-`lem:det-factor`. -/
+/-- Expanding `L` and cancelling `A²`. -/
 lemma L_add_Y : S.L + S.Y = S.P - S.P * S.A + S.A * S.P := by
   rw [L, Y, Matrix.add_mul, Matrix.mul_sub, Matrix.mul_sub, P_mul_P]
   abel
@@ -135,7 +131,7 @@ def Ups : Matrix (Fin n) (Fin 2) ℝ⟦X⟧ := (X : ℝ⟦X⟧) • toPS S.U₀
 /-- `𝒱 = [u − e; e]`. -/
 def Vps : Matrix (Fin 2) (Fin n) ℝ⟦X⟧ := toPS S.Vm
 
-/-- The `2 × 2` Schur matrix `M₂ = I₂ + 𝒱 N 𝒰` of `lem:det-factor`. -/
+/-- The `2 × 2` Schur-complement matrix `M₂ = I₂ + 𝒱 N 𝒰`. -/
 def M2 : Matrix (Fin 2) (Fin 2) ℝ⟦X⟧ := 1 + S.Vps * S.Nm * S.Ups
 
 /-- **The rank-two decomposition `I − zL = D + 𝒰𝒱`.** -/
@@ -211,8 +207,8 @@ lemma constantCoeff_det_M2 : constantCoeff (Matrix.det S.M2) = 1 := by
     split_ifs <;> simp
   rw [RingHom.map_det, RingHom.mapMatrix_apply, hmap, Matrix.det_one]
 
-/-- **The trace identity `eq:logdet-factor`, in resolvent form.**  No `n × n` determinant, no
-complexification, no formal logarithm. -/
+/-- The trace identity in resolvent form.  It uses neither an `n × n` determinant nor a formal
+logarithm. -/
 theorem traceSeries_sub :
     traceSeries S.L - traceSeries (-S.Y) = logDeriv (Matrix.det S.M2) := by
   have hND : S.Nm * (1 - (X : ℝ⟦X⟧) • toPS (-S.Y)) = 1 := resolvent_mul_one_sub_smul _

@@ -5,18 +5,18 @@ import Mathlib.Tactic
 /-!
 # The polynomials `c_n`
 
-`eq:def-cn-quotient`–`lem:cn` of `alternating_cycles_schur_proof.tex`.  For `n ≥ 0`,
+For `n ≥ 0`, define
 
 ```
   c_n(x,y) = ∑_{r=0}^{2n} (-1)^r x^{2n-r} y^r = (x^{2n+1} + y^{2n+1}) / (x + y),
 ```
 
-the second expression read by continuity at `x + y = 0`.  These are the coefficients of the
-partial-fraction expansion `eq:cn-generating`, and the two facts the proof needs about them are
+with the second expression read by continuity at `x + y = 0`.  These are the coefficients of a
+partial-fraction expansion, and the two facts needed below are
 
-* `cn_nonneg` (`eq:cn-positive`): `c_n ≥ 0`, because `c_n` is a difference quotient of the
+* `cn_nonneg`: `c_n ≥ 0`, because `c_n` is a difference quotient of the
   increasing function `t ↦ t^{2n+1}`;
-* `cn_recurrence` (`eq:cn-recurrence`): `(x²+y²) c_n − c_{n+1} = x²y² c_{n-1}` for `n ≥ 1`,
+* `cn_recurrence`: `(x²+y²) c_n − c_{n+1} = x²y² c_{n-1}` for `n ≥ 1`,
   whence `cn_le_mul`: `c_{n+1} ≤ (x²+y²) c_n`.
 
 Everything is derived from the single "peeling" identity `cn_succ`, which strips the top two terms
@@ -28,7 +28,7 @@ namespace AlternatingCycle
 
 open Finset
 
-/-- `c_n(x,y) = ∑_{r=0}^{2n} (-1)^r x^{2n-r} y^r`; this is `eq:def-cn-polynomial`. -/
+/-- The polynomial `c_n(x,y) = ∑_{r=0}^{2n} (-1)^r x^{2n-r} y^r`. -/
 def cn (n : ℕ) (x y : ℝ) : ℝ := ∑ i ∈ range (2 * n + 1), (-1) ^ i * x ^ (2 * n - i) * y ^ i
 
 @[simp] lemma cn_zero (x y : ℝ) : cn 0 x y = 1 := by simp [cn]
@@ -63,7 +63,7 @@ lemma cn_one (x y : ℝ) : cn 1 x y = x ^ 2 - x * y + y ^ 2 := by
   simp only [cn_zero] at this
   rw [this]; ring
 
-/-- `eq:def-cn-quotient`: `(x+y) c_n(x,y) = x^{2n+1} + y^{2n+1}`. -/
+/-- The divided-difference identity `(x+y) c_n(x,y) = x^{2n+1} + y^{2n+1}`. -/
 lemma add_mul_cn (n : ℕ) (x y : ℝ) :
     (x + y) * cn n x y = x ^ (2 * n + 1) + y ^ (2 * n + 1) := by
   induction n with
@@ -90,7 +90,7 @@ lemma add_mul_odd_pow_nonneg (n : ℕ) (x y : ℝ) :
     have h2 : x ^ (2 * n + 1) + y ^ (2 * n + 1) ≤ 0 := by linarith
     nlinarith [mul_nonneg (neg_nonneg.mpr h1) (neg_nonneg.mpr h2)]
 
-/-- The value on the antidiagonal `y = -x`, where the quotient `eq:def-cn-quotient` is read by
+/-- The value on the antidiagonal `y = -x`, where the quotient identity is read by
 continuity: `c_n(x,-x) = (2n+1) x^{2n}`. -/
 lemma cn_neg (n : ℕ) (x : ℝ) : cn n x (-x) = (2 * n + 1) * x ^ (2 * n) := by
   induction n with
@@ -104,7 +104,7 @@ lemma cn_neg (n : ℕ) (x : ℝ) : cn n x (-x) = (2 * n + 1) * x ^ (2 * n) := by
       push_cast
       ring
 
-/-- **`eq:cn-positive`.**  `c_n` is nonnegative on all of `ℝ²`. -/
+/-- The polynomial `c_n` is nonnegative on all of `ℝ²`. -/
 lemma cn_nonneg (n : ℕ) (x y : ℝ) : 0 ≤ cn n x y := by
   rcases eq_or_ne (x + y) 0 with h | h
   · have hy : y = -x := by linarith
@@ -121,13 +121,13 @@ lemma cn_nonneg (n : ℕ) (x y : ℝ) : 0 ≤ cn n x y := by
         _ = (x + y) ^ 2 * cn n x y := by rw [← h2]; ring
     exact le_of_mul_le_mul_left (by simpa using hprod) hsq
 
-/-- **`eq:cn-recurrence`.**  Stated at `n+1` so that the right-hand side never mentions `c_{-1}`. -/
+/-- A recurrence stated at `n+1`, so that the right-hand side never mentions `c_{-1}`. -/
 lemma cn_recurrence (n : ℕ) (x y : ℝ) :
     (x ^ 2 + y ^ 2) * cn (n + 1) x y - cn (n + 2) x y = x ^ 2 * y ^ 2 * cn n x y := by
   rw [cn_succ (n + 1), cn_succ n]
   ring
 
-/-- The contraction step of `lem:beta-monotone` for an off-diagonal pair. -/
+/-- The recursive inequality for an off-diagonal pair. -/
 lemma cn_le_mul (n : ℕ) (x y : ℝ) :
     cn (n + 2) x y ≤ (x ^ 2 + y ^ 2) * cn (n + 1) x y := by
   have h := cn_recurrence n x y
@@ -136,7 +136,7 @@ lemma cn_le_mul (n : ℕ) (x y : ℝ) :
 /-! ### The convolution form
 
 The coefficients `β_n` arise from a Cauchy product, so `c_n` is needed in the shape
-`∑_{p+q=n} x^{2p}y^{2q} − xy ∑_{p+q=n-1} x^{2p}y^{2q}` (`eq:partial-fraction` expanded).  Both sides
+`∑_{p+q=n} x^{2p}y^{2q} − xy ∑_{p+q=n-1} x^{2p}y^{2q}`.  Both sides
 satisfy the peeling recursion `cn_succ`, so a single induction identifies them. -/
 
 /-- `S_n(x,y) = ∑_{p+q=n} x^{2p} y^{2q}`. -/

@@ -6,8 +6,8 @@ import Mathlib.Tactic
 /-!
 # The logarithmic-derivative operator on `ℝ⟦X⟧`
 
-The note `alternating_cycles_schur_proof.tex` extracts its trace identities from
-`−log det(I − zL)`.  A formal logarithm is never needed: every use is of the shape
+A logarithmic derivative captures the required trace identities without introducing a formal
+logarithm.  Every use is of the shape
 `m · [z^m](−log A)`, and
 
 ```
@@ -22,11 +22,10 @@ So we define
 
 on `ℝ⟦X⟧`, a rational operation, and use only
 
-* `logDeriv_mul` — `Λ(AB) = Λ A + Λ B` for `A, B` with constant coefficient `1`
-  (this is where "`log` of a product" is used, `eq:logdet-factor` and `eq:log-decomposition`);
+* `logDeriv_mul` — `Λ(AB) = Λ A + Λ B` for `A, B` with constant coefficient `1`;
 * `coeff_logDeriv_one_add_X` — `[z^m] Λ(1+X) = −1` for odd `m` (`[z^m] log(1+z) = 1/m`);
 * `coeff_logDeriv_one_sub_eq_sum` — the expansion of `Λ(1−H)` in powers of `H`, for `H` with zero
-  constant coefficient (`eq:log-G-expansion`, `−log(1−H) = ∑_{r≥1} H^r/r`).
+  constant coefficient.
 
 No `PowerSeries.log`, no `Real.log`, no convergence.
 -/
@@ -44,8 +43,7 @@ def logDeriv (A : ℝ⟦X⟧) : ℝ⟦X⟧ := -(X * (d⁄dX ℝ A) * A⁻¹)
 lemma mul_inv_of_constantCoeff_one {A : ℝ⟦X⟧} (h : constantCoeff A = 1) : A * A⁻¹ = 1 :=
   PowerSeries.mul_inv_cancel A (by rw [h]; exact one_ne_zero)
 
-/-- **`Λ` turns products into sums.**  This is the only form in which the logarithm of a product is
-used in the note. -/
+/-- The logarithmic derivative turns products into sums. -/
 lemma logDeriv_mul {A B : ℝ⟦X⟧} (hA : constantCoeff A = 1) (hB : constantCoeff B = 1) :
     logDeriv (A * B) = logDeriv A + logDeriv B := by
   have hA' := mul_inv_of_constantCoeff_one hA
@@ -104,7 +102,7 @@ lemma coeff_pow_eq_zero {H : ℝ⟦X⟧} (hH : constantCoeff H = 0) {s j : ℕ} 
 /-! ### The expansion of `Λ(1 − H)` in powers of `H` -/
 
 /-- One term of the expansion, in division-free form: differentiating `H^{r+1}` produces the
-factor `r+1`.  This is `eq:log-G-expansion` term by term. -/
+factor `r+1`. -/
 lemma coeff_X_mul_deriv_mul_pow (H : ℝ⟦X⟧) (m r : ℕ) :
     ((r : ℝ) + 1) * coeff m (X * (d⁄dX ℝ H) * H ^ r) = m * coeff m (H ^ (r + 1)) := by
   have hd : d⁄dX ℝ (H ^ (r + 1)) = ((r + 1 : ℕ) : ℝ⟦X⟧) * H ^ r * (d⁄dX ℝ H) := by
@@ -120,7 +118,7 @@ lemma coeff_X_mul_deriv_mul_pow (H : ℝ⟦X⟧) (m r : ℕ) :
   rw [h2, coeff_C_mul] at h3
   exact h3
 
-/-- **`eq:log-G-expansion`.**  `Λ(1 − H) = X · H' · (1−H)⁻¹`, and the resolvent may be truncated at
+/-- The identity `Λ(1 − H) = X · H' · (1−H)⁻¹`, with the resolvent truncated at
 level `m` because `H^{m+1}` contributes nothing to the `m`-th coefficient. -/
 lemma coeff_logDeriv_one_sub_eq_sum {H : ℝ⟦X⟧} (hH : constantCoeff H = 0) (m : ℕ) :
     coeff m (logDeriv (1 - H)) = ∑ r ∈ range (m + 1), coeff m (X * (d⁄dX ℝ H) * H ^ r) := by
@@ -138,7 +136,7 @@ lemma coeff_logDeriv_one_sub_eq_sum {H : ℝ⟦X⟧} (hH : constantCoeff H = 0) 
   rw [hL, map_add, coeff_mul_pow_eq_zero hH _ (Nat.lt_succ_self m), add_zero, hS,
     Finset.mul_sum, map_sum]
 
-/-- The sign consequence used in `lem:odd-log`: if every power `H^s` (`s ≥ 1`) has nonpositive
+/-- If every power `H^s` (`s ≥ 1`) has nonpositive
 `m`-th coefficient, then so does `Λ(1 − H)`. -/
 lemma coeff_logDeriv_one_sub_nonpos {H : ℝ⟦X⟧} (hH : constantCoeff H = 0) (m : ℕ)
     (hpow : ∀ s, 1 ≤ s → coeff m (H ^ s) ≤ 0) :

@@ -11,7 +11,7 @@ For a symmetric kernel `K` and even cycle length `2m`,
 ```
 
 because the `2m`-fold composite splits as the square of the `m`-fold one, and powers of a symmetric
-kernel are symmetric.  This is what turns the strengthened inequality of `Main.lean` into the bound
+kernel are symmetric.  This is what turns the inequality of `Main.lean` into the bound
 `Alt_{2m}(W) ≤ 4^{-m}`.
 -/
 

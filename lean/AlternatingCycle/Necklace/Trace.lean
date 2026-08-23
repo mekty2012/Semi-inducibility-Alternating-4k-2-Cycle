@@ -21,7 +21,7 @@ pattern `ε` and the numbers `μ`.  Instantiating `(𝒜, τ, j, k, μ)` twice �
 ⟨e, Aʲ e⟩`, and at kernels with `μ j = ` the path density — therefore produces the *same* number on
 the two sides, which is exactly Fact A.
 
-The alternating specialisation `alt` is the one the paper needs: with `ε i = (−1)^i`,
+The alternating specialization `alt` uses `ε i = (−1)^i`:
 
 ```
   τ (((j + k) * (j − k)) ^ m) + (−1)^(m+1) * τ (k ^ (2m)) = ∑_{a,b} coeff alt μ (2m) a b * μ (a + b),
@@ -65,6 +65,51 @@ end Trace
 
 /-- The alternating sign pattern `+, −, +, −, …` of `(P + A)(P − A)`. -/
 def alt (i : ℕ) : ℝ := (-1) ^ i
+
+/-- A period-two coefficient pattern with values `a, -b, a, -b, ...`. -/
+def colorPattern (a b : ℝ) (i : ℕ) : ℝ := if Even i then a else -b
+
+@[simp] lemma colorPattern_two_mul (a b : ℝ) (m : ℕ) :
+    colorPattern a b (2 * m) = a := by
+  simp [colorPattern]
+
+@[simp] lemma colorPattern_two_mul_succ (a b : ℝ) (m : ℕ) :
+    colorPattern a b (2 * m + 1) = -b := by
+  simp [colorPattern]
+
+/-- An even period-two word is a power of its two consecutive factors. -/
+lemma word_colorPattern (a b : ℝ) (j k : 𝒜) : ∀ m : ℕ,
+    word (colorPattern a b) j k (2 * m) = ((j + a • k) * (j - b • k)) ^ m
+  | 0 => by simp
+  | m + 1 => by
+      have h : 2 * (m + 1) = 2 * m + 1 + 1 := by ring
+      rw [h, word_succ, word_succ, word_colorPattern a b j k m,
+        colorPattern_two_mul, colorPattern_two_mul_succ, pow_succ]
+      simp only [neg_smul, sub_eq_add_neg, mul_assoc]
+
+/-- The pure-power coefficient of an even period-two word is `(-a*b)^m`. -/
+lemma alphaC_colorPattern (a b : ℝ) : ∀ m : ℕ,
+    alphaC (colorPattern a b) (2 * m) = (-(a * b)) ^ m
+  | 0 => rfl
+  | m + 1 => by
+      have h : 2 * (m + 1) = 2 * m + 1 + 1 := by ring
+      rw [h, alphaC_succ, alphaC_succ, alphaC_colorPattern a b m,
+        colorPattern_two_mul, colorPattern_two_mul_succ, pow_succ]
+      ring
+
+/-- For `a*b=1` and odd length parameter, the period-two trace and the pure even moment add to
+the universal rank-one moment expression. -/
+theorem tau_colorPattern_add (a b : ℝ) (μ : ℕ → ℝ) (j k : 𝒜) (τ : 𝒜 →ₗ[ℝ] ℝ)
+    (hjk : ∀ g : ℕ, j * k ^ g * j = μ g • j)
+    (hcyc : ∀ x y : 𝒜, τ (x * y) = τ (y * x)) (hτj : ∀ g : ℕ, τ (j * k ^ g) = μ g)
+    (hab : a * b = 1) {m : ℕ} (hm : Odd m) :
+    τ (((j + a • k) * (j - b • k)) ^ m) + τ (k ^ (2 * m))
+      = ∑ x ∈ range (2 * m + 1), ∑ y ∈ range (2 * m + 1),
+          coeff (colorPattern a b) μ (2 * m) x y * μ (x + y) := by
+  rw [← word_colorPattern a b j k m,
+    tau_word (colorPattern a b) μ j k τ hjk hcyc hτj (2 * m),
+    alphaC_colorPattern a b m, hab, hm.neg_one_pow]
+  ring
 
 @[simp] lemma alt_two_mul (m : ℕ) : alt (2 * m) = 1 := by
   rw [alt, pow_mul]; norm_num

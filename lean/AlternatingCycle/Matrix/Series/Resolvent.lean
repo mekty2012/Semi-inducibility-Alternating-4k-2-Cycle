@@ -8,11 +8,10 @@ import Mathlib.Tactic
 /-!
 # The formal resolvent of a real matrix
 
-The note derives its trace identities from `−log det(I − zM) = ∑_{r≥1} Tr(M^r) z^r/r`, which for a
-general (non-self-adjoint) matrix would require complexification and triangularization.  We never
-need it: the *resolvent* carries the same information and is elementary.
+The trace generating function is obtained directly from the *resolvent*. This is elementary even
+for a general non-self-adjoint matrix and requires no complexification or triangularization.
 
-For a real matrix `M` put
+For a real matrix `M`, define
 
 ```
   resolvent M := ∑_{r≥0} z^r M^r ∈ Matrix ι ι ℝ⟦X⟧,
@@ -109,7 +108,7 @@ lemma resolvent_mul_one_sub_smul (M : Matrix ι ι ℝ) :
       rw [map_sub, coeff_resolvent, coeff_succ_X_mul, coeff_mk, sub_self, Matrix.one_apply]
       split_ifs <;> simp
 
-/-- **`N + z·N' = N²`.**  The one differential identity the Schur reduction needs; here it is a
+/-- **`N + z·N' = N²`.**  The one differential identity the Schur-complement reduction needs; here it is a
 statement about coefficients, `(r+1)·M^r` on both sides. -/
 lemma resolvent_sq (M : Matrix ι ι ℝ) :
     resolvent M * resolvent M = resolvent M + (X : ℝ⟦X⟧) • matDeriv (resolvent M) := by

@@ -2,10 +2,10 @@ import AlternatingCycle.Matrix.MatrixMain
 import Mathlib.Analysis.Matrix.Spectrum
 
 /-!
-# `thm:matrix` for an arbitrary symmetric matrix
+# The trace inequality for an arbitrary symmetric matrix
 
-`MatrixMain.lean` proves the abstract trace inequality in a diagonalizing basis.  Everything in
-`thm:matrix` — the two traces and the unit vector — is invariant under orthogonal conjugation, so
+`MatrixMain.lean` proves the abstract trace inequality in a diagonalizing basis.  The two traces
+and the unit vector are invariant under orthogonal conjugation, so
 the general case follows by one application of the spectral theorem.  This is the only place in the
 development where the spectral theorem is used.
 -/
@@ -52,7 +52,7 @@ lemma vecMulVec_conj {Q R : Matrix (Fin n) (Fin n) ℝ} (hQR : Qᵀ = R) (e : Fi
   rw [Finset.sum_mul, Finset.sum_mul]
   exact Finset.sum_congr rfl fun l _ => by rw [Matrix.vecMulVec_apply]; ring
 
-/-- **`thm:matrix`.**  For a symmetric `A` with `Tr(A²) ≤ 1`, a unit vector `e`,
+/-- For a symmetric `A` with `Tr(A²) ≤ 1`, a unit vector `e`,
 `P = e ⊗ e` and odd `m`, `Tr(((P+A)(P−A))^m) + Tr(A^{2m}) ≤ 1`. -/
 theorem matrix_main_general {A : Matrix (Fin n) (Fin n) ℝ} (hsymm : Aᵀ = A)
     {e : Fin n → ℝ} (he : e ⬝ᵥ e = 1) (htau : Matrix.trace (A * A) ≤ 1)

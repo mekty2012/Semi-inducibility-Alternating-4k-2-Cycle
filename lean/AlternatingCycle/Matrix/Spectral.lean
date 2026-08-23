@@ -4,8 +4,7 @@ import AlternatingCycle.Matrix.Scalar.OddLog
 /-!
 # The coefficients `β_n` and their monotonicity
 
-This is `eq:def-beta`–`lem:beta-monotone` of `alternating_cycles_schur_proof.tex`.  A `Spectrum`
-is the spectral data of the
+A `Spectrum` is the spectral data of the
 symmetric operator `X` relative to the distinguished unit vector: eigenvalues `λ_i` (with
 multiplicity) and coordinates `e_i = ⟨e, v_i⟩`, so that `ω_i = e_i²` and `τ = ∑ λ_i² ≤ 1`.  The
 moments are
@@ -14,23 +13,22 @@ moments are
   μ_r = ∑_i ω_i λ_i^{2r} = ⟨e, X^{2r} e⟩,      ν_r = ∑_i ω_i λ_i^{2r+1} = ⟨e, X^{2r+1} e⟩,
 ```
 
-and `eq:def-beta` reads `β_n = ∑_{i,j} ω_i ω_j c_n(λ_i, λ_j)`.
+The coefficients are `β_n = ∑_{i,j} ω_i ω_j c_n(λ_i, λ_j)`.
 
 Main results:
 
-* `beta_zero` — `β₀ = 1` (`eq:spectral-budget`);
+* `beta_zero` — `β₀ = 1`;
 * `beta_nonneg` — from `cn_nonneg`;
-* `beta_one_le_tau` — `β₁ ≤ τ`, the `n = 0` step of `lem:beta-monotone`;
-* `beta_le_tau_mul` — `β_{n+1} ≤ τ β_n` for `n ≥ 1` (`eq:beta-tau-contract`);
+* `beta_one_le_tau` — the initial inequality `β₁ ≤ τ`;
+* `beta_le_tau_mul` — `β_{n+1} ≤ τ β_n` for `n ≥ 1`;
 * `beta_antitone` — the chain `1 = β₀ ≥ β₁ ≥ … ≥ 0`;
 * `beta_succ_conv` — the Cauchy-product shape needed to identify `∑ (-1)^n β_n z^n` with
   `h(z)² + z k(z)²`.
 
-The paper proves `β₁ ≤ τ` by writing `X` in a basis adapted to `e` and reading off `Tr(A²) ≥ 0`
-for the compression `A`.  We instead exhibit the compression's Frobenius norm directly: with
+The inequality `β₁ ≤ τ` follows by exhibiting the compression's Frobenius norm directly: with
 `a = ν₀`, `τ − β₁` dominates `∑_i (λ_i − ω_i(2λ_i − a))²`, because the off-diagonal sum
 `∑_{i,j} (e_i e_j(λ_i + λ_j − a))²` equals `2μ₁ − a²` and dominates its own diagonal.  No basis
-change and no `Submodule` bookkeeping.
+change or `Submodule` bookkeeping.
 -/
 
 namespace AlternatingCycle
@@ -59,7 +57,7 @@ def mu (r : ℕ) : ℝ := ∑ i, T.e i ^ 2 * T.lam i ^ (2 * r)
 /-- `ν_r = ⟨e, X^{2r+1} e⟩`. -/
 def nu (r : ℕ) : ℝ := ∑ i, T.e i ^ 2 * T.lam i ^ (2 * r + 1)
 
-/-- `eq:def-beta`. -/
+/-- The coefficient `β_r`. -/
 def beta (r : ℕ) : ℝ := ∑ i, ∑ j, T.e i ^ 2 * T.e j ^ 2 * cn r (T.lam i) (T.lam j)
 
 lemma tau_nonneg : 0 ≤ T.tau := Finset.sum_nonneg fun _ _ => sq_nonneg _
@@ -95,7 +93,7 @@ lemma lam_sq_add_le_tau {i j : Fin n} (hij : i ≠ j) : T.lam i ^ 2 + T.lam j ^ 
     (fun k _ _ => sq_nonneg (T.lam k))
   rwa [Finset.sum_pair hij] at this
 
-/-! ### `eq:beta-tau-contract` -/
+/-! ### Recursive inequality from the spectral bound -/
 
 lemma cn_step (r : ℕ) (i j : Fin n) :
     cn (r + 2) (T.lam i) (T.lam j) ≤ T.tau * cn (r + 1) (T.lam i) (T.lam j) := by
@@ -112,7 +110,7 @@ lemma cn_step (r : ℕ) (i j : Fin n) :
       mul_le_mul_of_nonneg_right (T.lam_sq_add_le_tau hij) (cn_nonneg _ _ _)
     linarith
 
-/-- **`eq:beta-tau-contract`.** -/
+/-- Each coefficient after the first is at most `τ` times its predecessor. -/
 lemma beta_le_tau_mul (r : ℕ) : T.beta (r + 2) ≤ T.tau * T.beta (r + 1) := by
   rw [beta, beta, Finset.mul_sum]
   refine Finset.sum_le_sum fun i _ => ?_
@@ -202,7 +200,7 @@ lemma double_sum_conv (g : Fin n → ℕ → ℝ) (s : Finset (ℕ × ℕ)) :
   rw [Finset.sum_congr rfl fun i _ => h1 i, Finset.sum_comm]
   exact Finset.sum_congr rfl fun p _ => by rw [Finset.sum_mul_sum]
 
-/-- `eq:def-beta` in Cauchy-product form: this is what matches `F = h² + z k²`. -/
+/-- The Cauchy-product form of `β`, matching `F = h² + z k²`. -/
 lemma beta_succ_conv (r : ℕ) : T.beta (r + 1)
     = (∑ p ∈ Finset.antidiagonal (r + 1), T.mu p.1 * T.mu p.2)
       - ∑ p ∈ Finset.antidiagonal r, T.nu p.1 * T.nu p.2 := by
@@ -246,7 +244,7 @@ open PowerSeries in
 @[simp] lemma coeff_lSer (r : ℕ) : coeff r T.lSer = (-1) ^ r * T.mu (r + 1) := by simp [lSer]
 
 open PowerSeries in
-/-- **`eq:h-ell`**: `h(z) + z ℓ(z) = 1`, from `N + zX²N = I`. -/
+/-- The identity `h(z) + z ℓ(z) = 1`, from `N + zX²N = I`. -/
 lemma hSer_add_X_mul_lSer : T.hSer + X * T.lSer = 1 := by
   ext m
   cases m with
@@ -261,7 +259,7 @@ lemma hSer_add_X_mul_lSer : T.hSer + X * T.lSer = 1 := by
       · exact Nat.succ_ne_zero r
 
 open PowerSeries in
-/-- **`eq:F-double`/`eq:def-beta`**: the series `F = h² + z k²` has coefficients
+/-- The series `F = h² + z k²` has coefficients
 `(-1)^n β_n`. -/
 lemma hSer_sq_add : T.hSer ^ 2 + X * T.kSer ^ 2 = betaSeries T.beta := by
   ext m
@@ -290,7 +288,7 @@ lemma hSer_sq_add : T.hSer ^ 2 + X * T.kSer ^ 2 = betaSeries T.beta := by
         pow_succ]
       ring
 
-/-- The full monotone chain `1 = β₀ ≥ β₁ ≥ … ≥ 0` of `eq:beta-monotone`. -/
+/-- The full monotone chain `1 = β₀ ≥ β₁ ≥ … ≥ 0`. -/
 lemma beta_antitone : ∀ r, T.beta (r + 1) ≤ T.beta r := by
   intro r
   cases r with

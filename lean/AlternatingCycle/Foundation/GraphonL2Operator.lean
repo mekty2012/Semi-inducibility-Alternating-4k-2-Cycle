@@ -9,7 +9,7 @@ import Mathlib.Analysis.Normed.Operator.Extend
 
 This file starts the graphon Hilbert-space layer used by the C9 low-band
 argument.  It does not assert compactness or trace-class spectral identities.
-Instead it records the concrete L² objects already forced by the integral
+Instead it provides the concrete L² objects already forced by the integral
 graphon definitions: bounded graphon-side functions define elements of
 `Lp ℝ 2 μ`, and the constant vector paired with the graphon degree function is
 exactly the edge density.
@@ -689,7 +689,7 @@ lemma kernelOpL2OfGood_eq_kernelOpL2OfGoodK
   exact ae_of_all _ fun _ => rfl
 
 /-- Pointwise `L¹` domination of the graphon kernel transform.  This is the
-first Schur-type estimate: since `0 <= W <= 1`, each row integral is bounded
+first pointwise bound: since `0 <= W <= 1`, each row integral is bounded
 by the integral of `|f|`. -/
 lemma abs_kernelOp_le_integral_abs (hW : IsGraphon W mu)
     {f : Omega -> Real} (hf : Good f) (x : Omega) :
@@ -708,7 +708,7 @@ lemma abs_kernelOp_le_integral_abs (hW : IsGraphon W mu)
           exact mul_le_of_le_one_left (abs_nonneg (f y)) (hW.le_one x y)
 
 /-- Sharper pointwise domination by the graphon transform of the absolute
-value.  This is the positivity-preserving estimate used in the Perron-type
+value.  This is the positivity-preserving inequality used in the Perron-type
 orientation of the top compact eigenvalue. -/
 lemma abs_kernelOp_le_kernelOp_abs (hW : IsGraphon W mu)
     {f : Omega -> Real} (hf : Good f) (x : Omega) :
@@ -748,7 +748,7 @@ lemma integral_kernelOp_mul_self_nonneg
   positivity
 
 /-- Squared-norm bound obtained from the pointwise `L¹` domination.  The
-remaining step for the usual `L²` contraction is the probability-space
+remaining step for the usual `L²` norm bound is the probability-space
 inequality `(∫ |f|)^2 <= ∫ f^2`. -/
 lemma norm_kernelOpL2OfGood_sq_le_integral_abs_sq
     (hW : IsGraphon W mu)
@@ -892,7 +892,7 @@ lemma norm_kernelOpL2OfGoodK_sub_le_const_mul_norm_goodL2_sub
         C * ‖goodL2 (mu := mu) hf - goodL2 (mu := mu) hg‖ := by
           rw [goodL2_sub (mu := mu) hf hg]
 
-/-! ### Hilbert-Schmidt estimates for bounded kernels -/
+/-! ### Hilbert--Schmidt bounds for bounded kernels -/
 
 /-- The iterated `L²` square mass of a concrete kernel.  This is the
 Hilbert-Schmidt bound used for operator-norm approximation; it makes no
@@ -1244,7 +1244,7 @@ lemma kernelOpGoodK_apply_mul_self_le_rowSq_mul_integral
   rw [hrowf, hrowrow, hff] at hcs
   simpa [kernelOp] using hcs
 
-/-- Hilbert-Schmidt squared-norm estimate on bounded representatives. -/
+/-- Hilbert--Schmidt squared-norm bound on bounded representatives. -/
 lemma norm_kernelOpL2OfGoodK_sq_le_kernelSqNorm_mul_norm_goodL2_sq
     {K : Omega -> Omega -> Real} (hK : GoodK K)
     {f : Omega -> Real} (hf : Good f) :
@@ -1415,7 +1415,7 @@ lemma integral_goodK_row_inner_self_eq_kernelSqNorm
     ∫ y, K x y * K x y ∂mu
   rw [inner_goodL2_eq_integral_mul (goodK_row hK x) (goodK_row hK x)]
 
-/-- Hilbert-Schmidt norm estimate on bounded representatives. -/
+/-- Hilbert--Schmidt norm bound on bounded representatives. -/
 lemma norm_kernelOpL2OfGoodK_le_sqrt_kernelSqNorm_mul_norm_goodL2
     {K : Omega -> Omega -> Real} (hK : GoodK K)
     {f : Omega -> Real} (hf : Good f) :
@@ -1433,8 +1433,8 @@ lemma norm_kernelOpL2OfGoodK_le_sqrt_kernelSqNorm_mul_norm_goodL2
   exact le_of_sq_le_sq hsq'
     (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))
 
-/-- The graphon kernel transform is an `L²` contraction on bounded measurable
-representatives.  This is the concrete Schur bound needed before promoting the
+/-- The graphon kernel transform has operator norm at most one on bounded measurable
+representatives.  This is the concrete norm bound needed before promoting the
 kernel to an operator on the quotient space. -/
 lemma norm_kernelOpL2OfGood_sq_le_norm_goodL2_sq
     (hW : IsGraphon W mu)
@@ -1450,7 +1450,7 @@ lemma norm_kernelOpL2OfGood_sq_le_norm_goodL2_sq
     _ = ‖goodL2 (mu := mu) hf‖ ^ 2 := by
           rw [norm_goodL2_sq_eq_integral_mul]
 
-/-- Unsquared form of the concrete `L²` contraction estimate. -/
+/-- Unsquared form of the concrete `L²` norm bound. -/
 lemma norm_kernelOpL2OfGood_le_norm_goodL2
     (hW : IsGraphon W mu)
     {f : Omega -> Real} (hf : Good f) :
@@ -1881,7 +1881,7 @@ lemma kernelOpGoodKCLM_simpleFunc {K : Omega -> Omega -> Real}
 
 /-- The completed bounded-kernel operator agrees with the concrete integral
 transform on every bounded measurable representative.  This is the key
-density bridge from the simple-function extension to honest graphon-side
+density argument from the simple-function extension to honest graphon-side
 functions. -/
 lemma kernelOpGoodKCLM_goodL2 {K : Omega -> Omega -> Real}
     (hK : GoodK K)
@@ -2091,7 +2091,7 @@ lemma kernelOpGoodKCLM_sub_kernel {K L : Omega -> Omega -> Real}
       hcomp
   simpa [kernelOpGoodKCLM] using huniq
 
-/-- Operator-norm estimate for the difference of two bounded-kernel operators,
+/-- Operator-norm bound for the difference of two bounded-kernel operators,
 from a uniform bound on the pointwise kernel difference. -/
 lemma norm_kernelOpGoodKCLM_sub_le {K L : Omega -> Omega -> Real}
     (hK : GoodK K) (hL : GoodK L)
@@ -2106,7 +2106,7 @@ lemma norm_kernelOpGoodKCLM_sub_le {K L : Omega -> Omega -> Real}
   exact norm_kernelOpGoodKCLM_le
     (mu := mu) (goodK_sub hK hL) hC0 hSubC
 
-/-- Hilbert-Schmidt operator-norm estimate for the difference of two
+/-- Hilbert--Schmidt operator-norm bound for the difference of two
 bounded-kernel operators. -/
 lemma norm_kernelOpGoodKCLM_sub_le_sqrt_kernelSqNorm
     {K L : Omega -> Omega -> Real}
@@ -2252,7 +2252,7 @@ lemma norm_kernelOpCLM_le_one (hW : IsGraphon W mu) :
     _ <= 1 := by
           simpa using norm_kernelOpSimpleCLM_le_one (mu := mu) hW
 
-/-- Pointwise contraction estimate for the full `L²` graphon operator. -/
+/-- Pointwise norm bound for the full `L²` graphon operator. -/
 lemma norm_kernelOpCLM_apply_le (hW : IsGraphon W mu)
     (f : Lp Real 2 mu) :
     ‖kernelOpCLM (mu := mu) hW f‖ <= ‖f‖ := by
@@ -2384,7 +2384,7 @@ lemma inner_kernelOpL2OfGood_goodL2_eq_integral
 /-- For bounded representatives, the absolute value of the graphon quadratic
 form is bounded by the quadratic form of the pointwise absolute value.
 
-This is the concrete positivity estimate behind the Perron orientation step:
+This is the concrete positivity inequality behind the Perron orientation step:
 for a nonnegative graphon kernel, replacing `f` by `|f|` cannot decrease the
 absolute Rayleigh numerator. -/
 lemma abs_inner_goodL2_kernelOpL2OfGood_self_le_abs
@@ -2638,8 +2638,8 @@ lemma kernelOpCLM_selfadj (hW : IsGraphon W mu)
 operator on every `L²` input.
 
 The proof separates vectors by the dense family of bounded strongly
-measurable representatives.  This is the bridge from the abstract extension
-definition of `kernelOpCLM` back to the graphon-side integral formula. -/
+measurable representatives.  This identifies the abstract extension
+`kernelOpCLM` with the graphon-side integral formula. -/
 lemma kernelOpCLM_eq_kernelOpL2OfL2_apply (hW : IsGraphon W mu)
     (f : Lp Real 2 mu) :
     kernelOpCLM (mu := mu) hW f =

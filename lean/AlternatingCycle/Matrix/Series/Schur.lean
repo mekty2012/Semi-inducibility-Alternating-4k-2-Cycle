@@ -2,11 +2,10 @@ import AlternatingCycle.Matrix.Series.Resolvent
 import Mathlib.LinearAlgebra.Matrix.Adjugate
 
 /-!
-# The rank-`κ` Schur reduction of a resolvent trace
+# The rank-`κ` Schur-complement reduction of a resolvent trace
 
-`lem:det-factor` of `alternating_cycles_schur_proof.tex` removes the rank-one projection `P` from
-`I − zL` by the matrix determinant lemma.  We do the same on the *resolvent* instead, which keeps
-everything on the trace side and avoids any `n × n` determinant.
+The rank-one projection in `I − zL` can be removed directly on the resolvent side.  This keeps
+the calculation at the level of traces and avoids any `n × n` determinant.
 
 Abstract setting: `Rinv = Dm + U * V` with `U : ι × κ`, `V : κ × ι`, and explicit two-sided
 inverses `Nm` of `Dm` and `Rm` of `Rinv`.  Writing
@@ -46,7 +45,8 @@ lemma resolvent_shift (hND : Nm * Dm = 1) (hRR : Rinv * Rm = 1) (hdec : Rinv = D
   rw [← h1]
   simp only [Matrix.mul_assoc]
 
-/-- **The Schur equation.**  `M₂ · (V·Rm) = V·Nm` with `M₂ = 1 + V·Nm·U`. -/
+/-- **The Schur-complement equation.**  `M₂ · (V·Rm) = V·Nm` with
+`M₂ = 1 + V·Nm·U`. -/
 lemma schur_eq (hND : Nm * Dm = 1) (hRR : Rinv * Rm = 1) (hdec : Rinv = Dm + U * V) :
     (1 + V * Nm * U) * (V * Rm) = V * Nm := by
   have hres := resolvent_shift hND hRR hdec
@@ -69,7 +69,7 @@ lemma trace_sub_eq (hND : Nm * Dm = 1) (hRR : Rinv * Rm = 1) (hdec : Rinv = Dm +
   rw [h]
   abel
 
-/-- **The division-free Schur trace identity.** -/
+/-- **The division-free Schur-complement trace identity.** -/
 theorem det_mul_trace_sub (hND : Nm * Dm = 1) (hRR : Rinv * Rm = 1)
     (hdec : Rinv = Dm + U * V) :
     Matrix.det (1 + V * Nm * U) * (Matrix.trace Rm - Matrix.trace Nm)

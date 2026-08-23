@@ -19,7 +19,7 @@ symmetric by linearity, and — the point — `X` acts by the kernel `2W − 1`:
 ```
 
 so its rows are exactly `K(x, ·)`.  That identity (`coeFn_opX`) is what `Compression/HSBound.lean` uses
-for the Bessel estimate and what makes the iterates `X^g 1` the kernel iterates of `K`.
+for Bessel's inequality and what makes the iterates `X^g 1` the kernel iterates of `K`.
 
 The file ends with `inner_oneL2_opX_pow_oneL2`: the `L²` vector moments `⟨1, X^g 1⟩` are the
 algebraic moments `kMoment` of `Necklace/KernelInstance.lean`, the numbers in which Fact A expresses
@@ -151,7 +151,7 @@ theorem opX_pow_oneL2 (hW : IsGraphon W μ) : ∀ g : ℕ,
       rw [hstep, opX_pow_oneL2 hW g, opX_goodL2 hW]
       rfl
 
-/-- **The moment bridge.**  The `L²` vector moments of `X` at the constant function are the
+/-- **The moment identity.**  The `L²` vector moments of `X` at the constant function are the
 algebraic moments `φ (k ^ g)` of `Necklace/KernelInstance.lean`. -/
 theorem inner_oneL2_opX_pow_oneL2 (hW : IsGraphon W μ) (g : ℕ) :
     inner ℝ (oneL2 μ) ((opX hW ^ g) (oneL2 μ)) = kMoment hW g := by

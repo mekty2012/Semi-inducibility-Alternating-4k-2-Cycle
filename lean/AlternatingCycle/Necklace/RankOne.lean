@@ -171,7 +171,7 @@ theorem word_eq (hjk : ∀ b : ℕ, j * k ^ b * j = μ b • j) :
       rw [Finset.sum_mul]
       refine Finset.sum_congr rfl fun b _ => ?_
       rw [smul_mul_assoc, term_mul_k j k a b]
-    -- expand the target: split the `b`-sum at `b = 0`, then drop the vanishing `a = n + 1` row
+    -- expand the goal: split the `b`-sum at `b = 0`, then drop the vanishing `a = n + 1` row
     have htarget :
         ∑ a ∈ range (n + 1 + 1), ∑ b ∈ range (n + 1 + 1),
             coeff ε μ (n + 1) a b • (k ^ a * j * k ^ b)

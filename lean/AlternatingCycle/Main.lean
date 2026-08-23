@@ -32,8 +32,8 @@ namespace AlternatingCycle
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
   {W : Ω → Ω → ℝ}
 
-/-- **The theorem.**  `eq:main-strengthened` of `alternating_cycles_schur_proof.tex`, for an
-arbitrary graphon on an arbitrary probability space:
+/-- The density-independent inequality for an arbitrary graphon on an arbitrary
+probability space:
 
 ```
   4^m · Alt_{2m}(W) + t(C_{2m}, 2W − 1) ≤ 1        (m odd).
@@ -66,7 +66,7 @@ theorem alt_add_cycle_le_one (hW : IsGraphon W μ) {m : ℕ} (hm : Odd m) :
     _ ≤ 1 := necklace_le_one hAsymm hunit htrace hm
 
 /-- **The alternating cycle is semi-inducible with density `4^{-m}`.**  Since `t(C_{2m}, 2W−1)` is
-nonnegative, the strengthened inequality gives
+nonnegative, the preceding inequality gives
 
 ```
   Alt_{2m}(W) ≤ 4^{-m}        (m odd),
@@ -83,7 +83,7 @@ theorem altDensity_le (hW : IsGraphon W μ) {m : ℕ} (hm : Odd m) :
   rw [le_div_iff₀ hpow, mul_comm]
   linarith
 
-/-- **The theorem, in the integral form of `alternating_cycles_schur_proof.tex`.**
+/-- The density-independent inequality in integral form.
 
 For an arbitrary graphon `W` on an arbitrary probability space and every odd `m = 2s+1`, with all
 indices read cyclically in `Fin (2m)`:

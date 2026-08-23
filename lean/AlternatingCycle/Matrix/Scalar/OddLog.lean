@@ -3,8 +3,7 @@ import AlternatingCycle.Matrix.Scalar.LogDeriv
 /-!
 # The odd logarithmic coefficient lemma
 
-This is `lem:odd-log` of `alternating_cycles_schur_proof.tex`, the lemma that isolates the role
-of the parity of `m`.
+This lemma isolates the role of the parity of `m`.
 
 Given a nonincreasing sequence `β` with `β 0 = 1`, set
 
@@ -12,7 +11,7 @@ Given a nonincreasing sequence `β` with `β 0 = 1`, set
   F(z) = ∑ (-1)^n β_n z^n,     G(z) = ∑ d_n z^n,     d_n = β_n - β_{n+1} ≥ 0.
 ```
 
-The two-line computation `eq:F-G`–`eq:factor-log`,
+The two-line computation
 
 ```
   (1+z) F(z) = 1 + z G(-z),        (1+z)(1 - z F(z)) = 1 - z² G(-z),
@@ -25,10 +24,10 @@ coefficients all carry the sign `(-1)^{m-2r}`.  For **odd** `m` that sign is neg
   coeff m (Λ (1 - z F(z))) ≤ 1,
 ```
 
-which is `eq:odd-log-bound` (recall `coeff m (Λ A) = m · [z^m](-log A)`).
+Recall that `coeff m (Λ A) = m · [z^m](-log A)`.
 
 Note what is *not* needed: nonnegativity of `β`.  Only `β 0 = 1` and monotonicity enter, the latter
-solely through `0 ≤ d_n` — and these are exactly the hypotheses of `lem:odd-log` in the note.
+solely through `0 ≤ d_n`.
 -/
 
 namespace AlternatingCycle
@@ -39,7 +38,7 @@ noncomputable section
 
 variable (β : ℕ → ℝ)
 
-/-- `F(z) = ∑_{n≥0} (-1)^n β_n z^n`, the series `eq:F-beta`. -/
+/-- The series `F(z) = ∑_{n≥0} (-1)^n β_n z^n`. -/
 def betaSeries : ℝ⟦X⟧ := PowerSeries.mk fun n => (-1) ^ n * β n
 
 /-- `G(z) = ∑_{n≥0} d_n z^n` with `d_n = β_n - β_{n+1}`, the successive-difference series. -/
@@ -71,9 +70,9 @@ lemma coeff_pow_nonneg {P : ℝ⟦X⟧} (hP : ∀ n, 0 ≤ coeff n P) (s : ℕ) 
       rw [pow_succ, coeff_mul]
       exact Finset.sum_nonneg fun p _ => mul_nonneg (ih p.1) (hP p.2)
 
-/-! ### The factorization `eq:F-G` -/
+/-! ### The scalar factorization -/
 
-/-- `eq:F-G`: `(1+z) F(z) = 1 + z G(-z)`. -/
+/-- The identity `(1+z) F(z) = 1 + z G(-z)`. -/
 lemma one_add_X_mul_betaSeries (hβ0 : β 0 = 1) :
     (1 + X) * betaSeries β = 1 + X * rescale (-1) (diffSeries β) := by
   ext n
@@ -89,7 +88,7 @@ lemma one_add_X_mul_betaSeries (hβ0 : β 0 = 1) :
       simp [pow_succ]
       ring
 
-/-- `eq:factor-log`: `(1+z)(1 - z F(z)) = 1 - z² G(-z)`. -/
+/-- The factorization `(1+z)(1 - z F(z)) = 1 - z² G(-z)`. -/
 lemma one_add_X_mul_one_sub (hβ0 : β 0 = 1) :
     (1 + X) * (1 - X * betaSeries β) = 1 - X ^ 2 * rescale (-1) (diffSeries β) := by
   have h := one_add_X_mul_betaSeries hβ0
@@ -120,7 +119,7 @@ lemma coeff_diffSeries_pow_nonpos (hanti : ∀ n, β (n + 1) ≤ β n) {m : ℕ}
 
 /-! ### The lemma -/
 
-/-- **`lem:odd-log`, `eq:odd-log-bound`.**  For odd `m`,
+/-- For odd `m`,
 `coeff m (Λ (1 - z F(z))) ≤ 1`, i.e. `m [z^m](-log(1 - zF(z))) ≤ 1`. -/
 theorem coeff_logDeriv_betaSeries_le_one (hβ0 : β 0 = 1) (hanti : ∀ n, β (n + 1) ≤ β n)
     {m : ℕ} (hm : Odd m) :
