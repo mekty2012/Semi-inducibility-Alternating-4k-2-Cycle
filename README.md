@@ -35,6 +35,11 @@ either equality case.
 The corresponding mathematical proof is
 [`alternating_cycles_density_semi_inducibility.pdf`](alternating_cycles_density_semi_inducibility.pdf).
 
+## Disclaimer
+
+After communicating with the author, I was informed that the paper [Generalized Turán problem for directed cycles](https://arxiv.org/pdf/2505.22189) proves the same result (in stronger form), where one can view alternating 4k+2 cycle as directed 2k+1 cycle.
+This result is stronger as we have stability result and partial edge profile result, wherea the Grzesik et al.'s result is stronger as it proves for more general cases. 
+
 ## Main declarations
 
 All declarations below are in the `AlternatingCycle` namespace.
